@@ -262,10 +262,18 @@ class Push_Sync {
 			$attachment = get_post( $attachment );
 		}
 
-		// Deal with compound mime types.
-		$type = explode( '/', $attachment->post_mime_type );
+		$mime_type = get_post_mime_type( $attachment );
 
-		return array_shift( $type );
+		// SVGs should be have the resource_type set as raw
+		if ( 'image/svg+xml' === $mime_type ) {
+			$type = 'raw';
+		} else {
+			// Deal with compound mime types.
+			$type = explode( '/', $mime_type );
+			$type = array_shift( $type );
+		}
+
+		return $type;
 	}
 
 	/**
